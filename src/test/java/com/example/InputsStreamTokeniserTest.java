@@ -40,14 +40,20 @@ public class InputsStreamTokeniserTest {
     }
 
     @Test
-    public void shouldTokeniseRandomInputWithoutError(){
+    public void shouldTokeniseRandomInputWithoutError() {
         byte[] data = new byte[10000];
         new Random().nextBytes(data);
 
         tokeniser = new InputStreamTokeniser(new ByteArrayInputStream(data));
 
         // should find at least word token unless very unlucky (in monkeys writing shakespeare level of bad luck)
-        assertTrue(consumeIter(tokeniser).size()>0);
+        assertTrue(consumeIter(tokeniser).size() > 0);
+    }
+
+    @Test
+    public void shouldBeNoTokensInEmptyStream() {
+        tokeniser = new InputStreamTokeniser(new ByteArrayInputStream(new byte[0]));
+        assertTrue(consumeIter(tokeniser).isEmpty());
     }
 
     private List<Word> consumeIter(Iterator<Word> words) {
