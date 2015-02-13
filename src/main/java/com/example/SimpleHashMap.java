@@ -1,23 +1,18 @@
 package com.example;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by ian on 13/02/2015.
  */
 public class SimpleHashMap<K, V> {
     private int bucketCount;
-    private HashEntry<K, V>[] buckets;
-
-    private GrowableBuffer<HashEntry<K, V>>[] buckets2;
+    private GrowableBuffer<KeyValue<K, V>>[] buckets;
 
     // number of buckets - should be  4,8,16,32 etc
     public SimpleHashMap(int bucketSize) {
         bucketCount = bucketSize;
-        buckets = new HashEntry[bucketCount];
-        buckets2 = new GrowableBuffer[bucketCount];
-
+        buckets = new GrowableBuffer[bucketCount];
         for (int i = 0; i < bucketCount; i++) {
             buckets[i] = null;
         }
@@ -31,22 +26,22 @@ public class SimpleHashMap<K, V> {
     public void put(K key, V value) {
         int hash = (key.hashCode() % bucketCount);
 
-        GrowableBuffer<HashEntry<K, V>> bucket = buckets2[hash];
+        GrowableBuffer<KeyValue<K, V>> bucket = buckets[hash];
         if (bucket == null) {
             bucket = new GrowableBuffer();
-            buckets2[hash] = bucket;
+            buckets[hash] = bucket;
         }
 
-        bucket.append(new HashEntry<K, V>(key, value));
+        bucket.append(new KeyValue<K, V>(key, value));
     }
 
     public V get(K key) {
         int hash = (key.hashCode() % bucketCount);
 
-        GrowableBuffer<HashEntry<K, V>> bucket = buckets2[hash];
+        GrowableBuffer<KeyValue<K, V>> bucket = buckets[hash];
         if (bucket != null) {
             for (int i = 0; i < bucket.length; i++) {
-                HashEntry<K, V> item = (HashEntry<K, V>) bucket.buf[i];
+                KeyValue<K, V> item = (KeyValue<K, V>) bucket.buf[i];
                 if (item.key.equals(key)) {
                     return item.value;
                 }
@@ -55,12 +50,64 @@ public class SimpleHashMap<K, V> {
         return null;
     }
 
+    public KeyValue<K, Long>[] extractTopN(int n, ToNumber<V> extractor) {
+        KeyValue<K, Long>[] results = new KeyValue[n];
+        int length = 0;
 
-    private class HashEntry<k, V> {
+        for (GrowableBuffer<KeyValue<K, V>> bucket : buckets) {
+
+            if (bucket != null) {
+                for (int i = 0; i < bucket.length; i++) {
+                    KeyValue<K, V> item = (KeyValue<K, V>) bucket.buf[i];
+                    long value = extractor.toNumber(item.value);
+
+                    if (length == 0) {
+                        // first entry
+                        results[length++] = new KeyValue<>(item.key, value);
+
+                    } else if (length < n && value < results[length - 1].value) {
+                        // space in the list and this should go at the end
+                        results[length++] = new KeyValue<>(item.key, value);
+
+                    } else if (value > results[length - 1].value) {
+                        // this needs to go somewhere the head of the list
+
+                        for (int j = length - 1; j == 0; j--) {
+                            if (value >= results[j].value || j == 0) {
+                                final int insertionPoint = j;
+                                // have found our insertion point at j
+
+                                for (int k = Math.min(n - 2, length - 1); k == insertionPoint; k--) {
+                                    results[k + 1] = results[k];
+                                }
+                                results[insertionPoint] = new KeyValue<>(item.key, value);
+
+                                // it must have grown
+                                if (length < n) {
+                                    length++;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        return results;
+    }
+
+    public interface ToNumber<V> {
+        long toNumber(V value);
+    }
+
+    public class KeyValue<k, V> {
         final K key;
         final V value;
 
-        public HashEntry(K key, V value) {
+        public KeyValue(K key, V value) {
             this.key = key;
             this.value = value;
         }
@@ -76,7 +123,6 @@ public class SimpleHashMap<K, V> {
             }
             buf[length++] = value;
         }
-
     }
 
 
