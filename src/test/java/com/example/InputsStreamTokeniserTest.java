@@ -30,14 +30,24 @@ public class InputsStreamTokeniserTest {
     @Test
     public void shouldTokeniseWithPunctuationAndNumbers() {
         tokeniser = new InputStreamTokeniser(
-                new ByteArrayInputStream("This, is bad's \npunctuation 101".getBytes()));
+                new ByteArrayInputStream("this, is bad's \npunctuation 101".getBytes()));
 
-
-        List<Word> expected = Arrays.asList(new Word("This"), new Word("is"),
+        List<Word> expected = Arrays.asList(new Word("this"), new Word("is"),
                 new Word("bad"), new Word("s"), new Word("punctuation"));
 
         assertEquals(consumeIter(tokeniser), expected);
     }
+
+    @Test
+    public void shouldConvertToLowerCase() {
+        tokeniser = new InputStreamTokeniser(
+                new ByteArrayInputStream("THE End".getBytes()));
+
+        List<Word> expected = Arrays.asList(new Word("the"), new Word("end"));
+
+        assertEquals(consumeIter(tokeniser), expected);
+    }
+
 
     @Test
     public void shouldTokeniseRandomInputWithoutError() {
@@ -46,7 +56,7 @@ public class InputsStreamTokeniserTest {
 
         tokeniser = new InputStreamTokeniser(new ByteArrayInputStream(data));
 
-        // should find at least word token unless very unlucky (in monkeys writing shakespeare level of bad luck)
+        // should find at least one word token unless very unlucky (in monkeys writing shakespeare level of bad luck)
         assertTrue(consumeIter(tokeniser).size() > 0);
     }
 

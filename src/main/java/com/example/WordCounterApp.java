@@ -19,7 +19,7 @@ public class WordCounterApp {
         InputStreamTokeniser tokeniser = new InputStreamTokeniser(new FileInputStream(f));
 
 
-        Map<Word, MutableLong> counters = new HashMap<Word, MutableLong>();
+        Map<Word, MutableLong> counters = new HashMap<>();
         while (tokeniser.hasNext()) {
             Word word = tokeniser.next();
             MutableLong count = counters.get(word);
@@ -31,7 +31,7 @@ public class WordCounterApp {
         }
 
         // now a full list of pairs
-        List<WordCount> wordCounts = new ArrayList<WordCount>(counters.size());
+        List<WordCount> wordCounts = new ArrayList<>(counters.size());
         for (Map.Entry<Word, MutableLong> entry : counters.entrySet()) {
             wordCounts.add(new WordCount(entry.getKey(), entry.getValue().theValue));
         }
@@ -44,10 +44,10 @@ public class WordCounterApp {
             }
         });
 
-        // first twenty
+        // top twenty
         for (int i = 0; i < Math.min(wordCounts.size(), 20); i++) {
             WordCount wc = wordCounts.get(i);
-            System.out.println(wc.count() + "=" + wc.word());
+            System.out.println(wc.count() + " " + wc.word());
         }
 
     }

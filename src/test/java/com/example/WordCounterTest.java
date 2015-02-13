@@ -25,6 +25,5 @@ public class WordCounterTest {
             System.out.print(theChar);
             data = in.read();
         }
-
     }
 }

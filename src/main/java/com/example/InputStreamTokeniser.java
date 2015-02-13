@@ -17,18 +17,8 @@ public class InputStreamTokeniser implements Iterator<Word> {
     private Word next;
     private BufferedReader in;
 
-
     public InputStreamTokeniser(InputStream is) {
         in = new BufferedReader(new InputStreamReader(is));
-
-//        int data = in.read();
-//        while(data != -1){
-//            char theChar = (char) data;
-//            System.out.print(theChar);
-//            data = in.read();
-//        }
-
-
     }
 
     @Override
@@ -47,8 +37,7 @@ public class InputStreamTokeniser implements Iterator<Word> {
         if (next != null) {
             nextRead = false;
             return next;
-        }
-        else {
+        } else {
             throw new NoSuchElementException();
         }
     }
@@ -60,6 +49,10 @@ public class InputStreamTokeniser implements Iterator<Word> {
 
     private boolean isAlpha(int c) {
         return (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
+    }
+
+    private char toLowerCase(int ch) {
+        return (char) (ch > 90 ? ch : ch + 32);
     }
 
     private void readAhead() {
@@ -77,23 +70,23 @@ public class InputStreamTokeniser implements Iterator<Word> {
                 return;
             }
 
-            // for simplicity we will assume no long word  !
+            // for simplicity we will assume no long words
             // could possible consider a linked list which could grow indefienetly
             // or even just a plain old  ArrayList
             char[] buf = new char[1024];
 
 
             // buffer up until the first non alpha char
-            buf[0] = (char) c;
+            buf[0] = toLowerCase(c);
             int charsRead = 1;
             c = in.read();
             while (isAlpha(c)) {
-                buf[charsRead++] = (char) c;
+                buf[charsRead++] = toLowerCase(c);
                 c = in.read();
             }
 
             // now we have a word - for blazing fast performance it may nice to
-            // get live without the copyOf
+            // live without the copyOf
             next = new Word(Arrays.copyOf(buf, charsRead));
             nextRead = true;
 
