@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * An efficient way of keeping a word as an array of chars
+ * The app to run through a list of words and count them
  */
 public class WordCounterApp {
 
