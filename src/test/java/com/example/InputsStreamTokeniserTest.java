@@ -48,6 +48,17 @@ public class InputsStreamTokeniserTest {
         assertEquals(consumeIter(tokeniser), expected);
     }
 
+    @Test
+    public void shouldGrowInternalBuffer() {
+        // TODO: ideally this test should on GrowableCharBuffer
+        tokeniser = new InputStreamTokeniser(
+                new ByteArrayInputStream("aaaaaaa bbbbbbbb ccccccccc".getBytes()));
+
+        List<Word> expected = Arrays.asList(new Word("aaaaaaa"), new Word("bbbbbbbb"), new Word("ccccccccc"));
+
+        assertEquals(consumeIter(tokeniser), expected);
+    }
+
 
     @Test
     public void shouldTokeniseRandomInputWithoutError() {

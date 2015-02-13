@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Created by ianmorgan on 12/02/15.
+ * Created by ian morgan on 12/02/15.
+ * <p/>
+ * Converts an input stream to a stream of tokens
  */
 public class InputStreamTokeniser implements Iterator<Word> {
 
@@ -44,7 +46,7 @@ public class InputStreamTokeniser implements Iterator<Word> {
 
     @Override
     public void remove() {
-        throw new RuntimeException("This should never have been allowed!");
+        throw new RuntimeException("This should never have been allowed by Mr Gosling!");
     }
 
     private boolean isAlpha(int c) {
@@ -70,28 +72,41 @@ public class InputStreamTokeniser implements Iterator<Word> {
                 return;
             }
 
-            // for simplicity we will assume no long words
-            // could possible consider a linked list which could grow indefienetly
-            // or even just a plain old  ArrayList
-            char[] buf = new char[1024];
-
 
             // buffer up until the first non alpha char
-            buf[0] = toLowerCase(c);
-            int charsRead = 1;
+            GrowableCharBuffer buf = new GrowableCharBuffer();
+            buf.addChar(toLowerCase(c));
             c = in.read();
             while (isAlpha(c)) {
-                buf[charsRead++] = toLowerCase(c);
+                buf.addChar(toLowerCase(c));
                 c = in.read();
             }
 
-            // now we have a word - for blazing fast performance it may nice to
-            // live without the copyOf
-            next = new Word(Arrays.copyOf(buf, charsRead));
+            next = new Word(buf.buffer());
             nextRead = true;
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private class GrowableCharBuffer {
+        private char[] buf = new char[8];
+        private int length;
+
+        public void addChar(char c) {
+            if (length >= buf.length) {
+                buf = Arrays.copyOf(buf, buf.length * 2);
+            }
+            buf[length++] = c;
+        }
+
+        public char[] buffer() {
+            // now we have a word - for blazing fast performance it may nice to
+            // live without the copyOf, but it would use up a tad more memory
+            return Arrays.copyOf(buf, length);
+        }
+
+
     }
 }

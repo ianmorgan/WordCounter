@@ -51,15 +51,36 @@
 				<version>2.7.2</version>
 
 				<configuration>
-					<includes>
+					<!--<includes>
 						<include>**/*Scenarios.java</include>
 						<include>**/Test*.java</include>
 						<include>**/*Test.java</include>
 						<include>**/*TestCase.java</include>
-					</includes>
+					</includes> -->
 
 				</configuration>
 
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.example.WordCounterApp</mainClass>
+					<workingDirectory>.</workingDirectory>
+					<arguments>
+						<argument>test.txt</argument>
+					</arguments>
+				</configuration>
 			</plugin>
 			
 
