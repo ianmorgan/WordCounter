@@ -21,5 +21,12 @@ Bash version
 
 Example Data
 ------------
-Is at http://faculty.washington.edu/stepp/courses/2004autumn/tcss143/lectures/files/2004-11-08/mobydick.txt
+Original data is at
+http://faculty.washington.edu/stepp/courses/2004autumn/tcss143/lectures/files/2004-11-08/mobydick.txt
+
+
+Possible Optimisations
+----------------------
+Don't use InputStreamReader and deal with raw bytes. If the raw stream is known to be in particular fixed length
+encoding this would be sufficient.
 
