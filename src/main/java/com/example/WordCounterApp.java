@@ -20,14 +20,25 @@ public class WordCounterApp {
 
 
         Map<Word, MutableLong> counters = new HashMap<>();
+
+        SimpleHashMap<Word, MutableLong> counters2 = new SimpleHashMap<>();
+
         while (tokeniser.hasNext()) {
-            Word word = tokeniser.next();
-            MutableLong count = counters.get(word);
-            if (count == null) {
-                count = new MutableLong();
-                counters.put(word, count);
+           Word word = tokeniser.next();
+//            MutableLong count = counters.get(word);
+//            if (count == null) {
+//                count = new MutableLong();
+//                counters.put(word, count);
+//            }
+//            count.theValue++;
+
+
+            MutableLong count2 = counters2.get(word);
+            if (count2 == null) {
+                count2 = new MutableLong();
+                counters2.put(word, count2);
             }
-            count.theValue++;
+            count2.theValue++;
         }
 
         // now a full list of pairs
