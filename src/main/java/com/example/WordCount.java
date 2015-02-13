@@ -1,15 +1,15 @@
 package com.example;
 
 /**
- * Generic way to manipulate a pair
+ * Hold a word - count pair
  */
 public class WordCount {
     private Word word;
     private Long count;
 
-    public WordCount(Word one, Long two) {
-        this.word = one;
-        this.count = two;
+    public WordCount(Word word, Long count) {
+        this.word = word;
+        this.count = count;
     }
 
     public Word word() {
