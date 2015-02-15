@@ -78,12 +78,4 @@ public class SimpleHashMapTest {
 
     }
 
-    private List<KeyValue<String, String>> consumeIter(Iterator<KeyValue<String, String>> items) {
-        List<KeyValue<String, String>> result = new ArrayList<>();
-        while (items.hasNext()) {
-            result.add(items.next());
-        }
-        return result;
-    }
-
 }

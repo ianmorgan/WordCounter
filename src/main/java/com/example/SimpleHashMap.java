@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 
 /**
- * Created by ian on 13/02/2015.
+ * A simple hash map
  */
 public class SimpleHashMap<K, V> {
     private int bucketCount;
@@ -65,7 +65,7 @@ public class SimpleHashMap<K, V> {
             }
         }
 
-        // work around generic array limitations
+        // for now work around generic array limitations
         // in Java language
         Object[] result = Arrays.copyOf(combined.buf, combined.length);
         return result;

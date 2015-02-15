@@ -9,7 +9,6 @@ import java.util.*;
 public class WordCounterApp {
 
     public static void main(String[] args) throws Exception {
-
         if (args.length == 0) {
             System.out.println("Must provide a file name");
             return;
@@ -19,10 +18,7 @@ public class WordCounterApp {
         InputStreamTokeniser tokeniser = new InputStreamTokeniser(new FileInputStream(f));
 
 
-        Map<Word, MutableLong> counters = new HashMap<>();
-
-        SimpleHashMap<Word, MutableLong> counters2 = new SimpleHashMap<>();
-
+        SimpleHashMap<Word, MutableLong> counters = new SimpleHashMap<>(8192);
         while (tokeniser.hasNext()) {
             Word word = tokeniser.next();
             MutableLong count = counters.get(word);
@@ -31,37 +27,14 @@ public class WordCounterApp {
                 counters.put(word, count);
             }
             count.theValue++;
-
-
-            MutableLong count2 = counters2.get(word);
-            if (count2 == null) {
-                count2 = new MutableLong();
-                counters2.put(word, count2);
-            }
-            count2.theValue++;
         }
 
         // now a full list of pairs
-        List<WordCount> wordCounts = new ArrayList<>(counters.size());
-        for (Map.Entry<Word, MutableLong> entry : counters.entrySet()) {
-            wordCounts.add(new WordCount(entry.getKey(), entry.getValue().theValue));
-        }
-
-        Object[] wordCounts2 = counters2.toArray();
-
-        System.out.println(wordCounts.size());
-        System.out.println(wordCounts2.length);
+        Object[] wordCounts = counters.toArray();
 
 
         // sort them highest first
-        Collections.sort(wordCounts, new Comparator<WordCount>() {
-            @Override
-            public int compare(WordCount a, WordCount b) {
-                return b.count().compareTo(a.count());
-            }
-        });
-
-        new ArrayUtils(wordCounts2).sortFirstN(20, new Comparator() {
+        new ArrayUtils(wordCounts).sortFirstN(20, new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
                 KeyValue<Word, MutableLong> item1 = (KeyValue<Word, MutableLong>) o1;
@@ -75,18 +48,11 @@ public class WordCounterApp {
                     return 0;
                 }
             }
-
-
         });
 
         // top twenty
-        for (int i = 0; i < Math.min(wordCounts.size(), 20); i++) {
-            WordCount wc = wordCounts.get(i);
-            System.out.println(wc.count() + " " + wc.word());
-        }
-
-        for (int i = 0; i < Math.min(wordCounts2.length, 20); i++) {
-            KeyValue<Word, MutableLong> wc = (KeyValue<Word, MutableLong>)wordCounts2[i];
+        for (int i = 0; i < Math.min(wordCounts.length, 20); i++) {
+            KeyValue<Word, MutableLong> wc = (KeyValue<Word, MutableLong>) wordCounts[i];
             System.out.println(wc.value.theValue + " " + wc.key);
         }
 
