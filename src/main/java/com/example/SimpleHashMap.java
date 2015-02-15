@@ -1,8 +1,7 @@
 package com.example;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+
 
 /**
  * Created by ian on 13/02/2015.
@@ -83,45 +82,6 @@ public class SimpleHashMap<K, V> {
             }
             buf[length++] = value;
         }
-    }
-
-    private class IteratorImpl implements Iterator<KeyValue<K, V>> {
-        private boolean nextRead;
-        private KeyValue<K, V> next;
-        private int currentBucket;
-        private int currentBucketItem;
-
-        @Override
-        public boolean hasNext() {
-            if (!nextRead) {
-                readAhead();
-            }
-            return next != null;
-        }
-
-        @Override
-        public KeyValue<K, V> next() {
-            if (!nextRead) {
-                readAhead();
-            }
-            if (next != null) {
-                nextRead = false;
-                return next;
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        public void remove() {
-            throw new RuntimeException("This should never have been allowed by Mr Gosling!");
-        }
-
-
-        private void readAhead() {
-
-
-        }
-
     }
 
 
