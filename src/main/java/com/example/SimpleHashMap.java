@@ -1,6 +1,8 @@
 package com.example;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Created by ian on 13/02/2015.
@@ -50,68 +52,26 @@ public class SimpleHashMap<K, V> {
         return null;
     }
 
-    public KeyValue<K, Long>[] extractTopN(int n, ToNumber<V> extractor) {
-        KeyValue<K, Long>[] results = new KeyValue[n];
-        int length = 0;
 
-        for (GrowableBuffer<KeyValue<K, V>> bucket : buckets) {
+    public Object[] toArray() {
 
+        // TODO - for efficient we should ideally make some attempt to size correctly
+        GrowableBuffer<KeyValue<K, V>> combined = new GrowableBuffer();
+        for (int i = 0; i < bucketCount; i++) {
+            GrowableBuffer<KeyValue<K, V>> bucket = buckets[i];
             if (bucket != null) {
-                for (int i = 0; i < bucket.length; i++) {
-                    KeyValue<K, V> item = (KeyValue<K, V>) bucket.buf[i];
-                    long value = extractor.toNumber(item.value);
-
-                    if (length == 0) {
-                        // first entry
-                        results[length++] = new KeyValue<>(item.key, value);
-
-                    } else if (length < n && value < results[length - 1].value) {
-                        // space in the list and this should go at the end
-                        results[length++] = new KeyValue<>(item.key, value);
-
-                    } else if (value > results[length - 1].value) {
-                        // this needs to go somewhere the head of the list
-
-                        for (int j = length - 1; j == 0; j--) {
-                            if (value >= results[j].value || j == 0) {
-                                final int insertionPoint = j;
-                                // have found our insertion point at j
-
-                                for (int k = Math.min(n - 2, length - 1); k == insertionPoint; k--) {
-                                    results[k + 1] = results[k];
-                                }
-                                results[insertionPoint] = new KeyValue<>(item.key, value);
-
-                                // it must have grown
-                                if (length < n) {
-                                    length++;
-                                }
-                                break;
-                            }
-                        }
-                    }
+                for (int j = 0; j < bucket.length; j++) {
+                    combined.append((KeyValue<K, V>) bucket.buf[j]);
                 }
             }
-
         }
 
-
-        return results;
+        // work around generic array limitations
+        // in Java language
+        Object[] result = Arrays.copyOf(combined.buf, combined.length);
+        return result;
     }
 
-    public interface ToNumber<V> {
-        long toNumber(V value);
-    }
-
-    public class KeyValue<k, V> {
-        final K key;
-        final V value;
-
-        public KeyValue(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
 
     private class GrowableBuffer<V> {
         Object[] buf = new Object[4];
@@ -123,6 +83,45 @@ public class SimpleHashMap<K, V> {
             }
             buf[length++] = value;
         }
+    }
+
+    private class IteratorImpl implements Iterator<KeyValue<K, V>> {
+        private boolean nextRead;
+        private KeyValue<K, V> next;
+        private int currentBucket;
+        private int currentBucketItem;
+
+        @Override
+        public boolean hasNext() {
+            if (!nextRead) {
+                readAhead();
+            }
+            return next != null;
+        }
+
+        @Override
+        public KeyValue<K, V> next() {
+            if (!nextRead) {
+                readAhead();
+            }
+            if (next != null) {
+                nextRead = false;
+                return next;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        public void remove() {
+            throw new RuntimeException("This should never have been allowed by Mr Gosling!");
+        }
+
+
+        private void readAhead() {
+
+
+        }
+
     }
 
 

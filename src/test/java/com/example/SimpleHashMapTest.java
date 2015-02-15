@@ -2,7 +2,12 @@ package com.example;
 
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Created by ian on 13/02/2015.
@@ -35,7 +40,6 @@ public class SimpleHashMapTest {
         map.put("d", "D");
         map.put("e", "E");
         map.put("f", "F");
-        map.put("e", "X");
 
         assertEquals("A", map.get("a"));
         assertEquals("B", map.get("b"));
@@ -58,36 +62,28 @@ public class SimpleHashMapTest {
         assertEquals("X", map.get("a"));
     }
 
-
     @Test
-    public void extractTopNFromHash() {
+    public void shouldConvertToArray(){
+        SimpleHashMap<String, String> map = new SimpleHashMap<>(4);
 
-        SimpleHashMap<String, String> map = new SimpleHashMap<>();
+        map.put("a", "A");
+        map.put("b", "B");
+        map.put("c", "C");
+        map.put("d", "D");
+        map.put("e", "E");
+        map.put("f", "F");
 
-        map.put("a", "apples");
-        map.put("b", "banana");
-        map.put("c", "carrot");
-        map.put("d", "durian fruit");
-        map.put("e", "eggplant");
-        map.put("f", "fruit");
-        map.put("g", "grapes");
-
-        SimpleHashMap.KeyValue[] counts = map.extractTopN(3, new SimpleHashMap.ToNumber<String>() {
-            @Override
-            public long toNumber(String value) {
-                return value.length();
-            }
-        });
-
-        assertEquals(counts[0].key, "d");
-        assertEquals(counts[0].value, 12L);
-
-        assertEquals(counts[1].key, "e");
-        assertEquals(counts[1].value, 9L);
-
-
-        System.out.println(counts);
-
+        assertEquals(map.toArray().length,6);
+        assertTrue(map.toArray()[0] instanceof KeyValue);
 
     }
+
+    private List<KeyValue<String, String>> consumeIter(Iterator<KeyValue<String, String>> items) {
+        List<KeyValue<String, String>> result = new ArrayList<>();
+        while (items.hasNext()) {
+            result.add(items.next());
+        }
+        return result;
+    }
+
 }
