@@ -14,7 +14,7 @@ public class ArrayUtils<T> {
     }
 
     /**
-     * Sort  the first N elements
+     * Sort the first N elements
      * The remaining items are left unsorted.
      * This is optimised for sorting a small collection from a larger array
      *

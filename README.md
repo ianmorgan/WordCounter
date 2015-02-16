@@ -2,6 +2,7 @@ Wordcounter
 ===========
 
 A simple Java app to stream over a text document counting the words.
+Doesn't use Java collections framework.
 
 
 Dependencies

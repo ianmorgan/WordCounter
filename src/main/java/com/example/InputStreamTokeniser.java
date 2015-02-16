@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 /**
  * Created by ian morgan on 12/02/15.
  * <p/>
- * Converts an input stream to a stream of tokens
+ * Converts an input stream to a stream of tokens.
  */
 public class InputStreamTokeniser implements Iterator<Word> {
 

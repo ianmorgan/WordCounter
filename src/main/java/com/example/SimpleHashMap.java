@@ -55,6 +55,7 @@ public class SimpleHashMap<K, V> {
     public Object[] toArray() {
 
         // TODO - for efficient we should ideally make some attempt to size correctly
+        //        before allocating the initial buffer
         GrowableBuffer<KeyValue<K, V>> combined = new GrowableBuffer();
         for (int i = 0; i < bucketCount; i++) {
             GrowableBuffer<KeyValue<K, V>> bucket = buckets[i];

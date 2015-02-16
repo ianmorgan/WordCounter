@@ -1,7 +1,7 @@
 package com.example;
 
 /**
- * A generic Key - Pair for use in map style collections.
+ * A generic Key - Value pair for use in map style collections.
  */
 
 public class KeyValue<K, V> {
